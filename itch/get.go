@@ -27,8 +27,8 @@ func getPageJSON(category string, page int) (string, error) {
 	return string(body), nil
 }
 
-func GetGameAssetsPageContent(page int, channel chan PageContent) (isLastPage bool, err error) {
-	json, err := getPageJSON("game-assets", page)
+func getPageContent(category string, page int, channel chan PageContent) (isLastPage bool, err error) {
+	json, err := getPageJSON(category, page)
 	if err != nil {
 		fmt.Println(err)
 		return isLastPage, err
@@ -48,4 +48,36 @@ func GetGameAssetsPageContent(page int, channel chan PageContent) (isLastPage bo
 		close(channel)
 	}
 	return isLastPage, nil
+}
+
+func GetGameAssetsPageContent(page int, channel chan PageContent) (isLastPage bool, err error) {
+	return getPageContent("game-assets", page, channel)
+}
+
+func GetBooksPageContent(page int, channel chan PageContent) (isLastPage bool, err error) {
+	return getPageContent("books", page, channel)
+}
+
+func GetToolsPageContent(page int, channel chan PageContent) (isLastPage bool, err error) {
+	return getPageContent("tools", page, channel)
+}
+
+func GetGamesPageContent(page int, channel chan PageContent) (isLastPage bool, err error) {
+	return getPageContent("games", page, channel)
+}
+
+func GetPhysicalGamesPageContent(page int, channel chan PageContent) (isLastPage bool, err error) {
+	return getPageContent("physical-games", page, channel)
+}
+
+func GetSoundtracksPageContent(page int, channel chan PageContent) (isLastPage bool, err error) {
+	return getPageContent("soundtracks", page, channel)
+}
+
+func GetGameModsPageContent(page int, channel chan PageContent) (isLastPage bool, err error) {
+	return getPageContent("game-mods", page, channel)
+}
+
+func GetMiscPageContent(page int, channel chan PageContent) (isLastPage bool, err error) {
+	return getPageContent("misc", page, channel)
 }
