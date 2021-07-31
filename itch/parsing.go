@@ -106,10 +106,10 @@ func parseEndDate(body string) string {
 	return matches[0]
 }
 
-// PageContentToItems converts a PageContent to a channel full of Item.
+// ConvertPageContentToItems converts a PageContent to a channel full of Item.
 // It also does the needed API calls to get the end date for each Item.
 // It may return an error if any arises.
-func PageContentToItems(content PageContent) (chan Item, error) {
+func ConvertPageContentToItems(content PageContent) (chan Item, error) {
 	reader := strings.NewReader(content.Content)
 	node, err := html.Parse(reader)
 	if err != nil {

@@ -65,12 +65,16 @@ func getPageContent(category string, page int, channel chan PageContent) (isLast
 		fmt.Println(err)
 		return isLastPage, err
 	}
+
 	channel <- content
 
 	isLastPage = content.NumItems < 30
 
 	return isLastPage, nil
 }
+
+// Type that represents a function to get a PageContent for a specific category.
+type GetCategoryPageContentFn func(int, chan PageContent) (bool, error)
 
 // GetGameAssetsPageContent puts in a channel the `game-assets` type content for a given page.
 // It returns whether it was the last pageand an error if any.
