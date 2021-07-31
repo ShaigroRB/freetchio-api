@@ -6,11 +6,11 @@ import (
 	"net/http"
 )
 
-const hostname = "https://itch.io/"
+const hostname = "https://itch.io"
 const onsaleParams = "/on-sale?format=json&page"
 
 func getPageJSON(category string, page int) (string, error) {
-	url := fmt.Sprintf("%s%s%s=%d", hostname, category, onsaleParams, page)
+	url := fmt.Sprintf("%s/%s%s=%d", hostname, category, onsaleParams, page)
 	resp, err := http.Get(url)
 
 	if err != nil {
@@ -20,6 +20,23 @@ func getPageJSON(category string, page int) (string, error) {
 
 	body, err := io.ReadAll(resp.Body)
 
+	if err != nil {
+		return "", err
+	}
+
+	return string(body), nil
+}
+
+func getPageSales(link string) (string, error) {
+	url := fmt.Sprintf("%s%s", hostname, link)
+	resp, err := http.Get(url)
+
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
 	}
@@ -44,9 +61,6 @@ func getPageContent(category string, page int, channel chan PageContent) (isLast
 
 	isLastPage = content.NumItems < 30
 
-	if isLastPage {
-		close(channel)
-	}
 	return isLastPage, nil
 }
 
