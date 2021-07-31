@@ -33,6 +33,7 @@ func getPreOrderQueue(root *html.Node) []*html.Node {
 // nodeToItemsWithoutEndDate returns a channel full of incomplete Item based on a node.
 // Those Item are missing the end date of the sale.
 func nodeToItemsWithoutEndDate(root *html.Node, maxItems int) chan Item {
+	// no problem with channel even without coroutine because the size is specified
 	cells := make(chan Item, maxItems)
 	nodes := getPreOrderQueue(root)
 
@@ -107,6 +108,7 @@ func parseEndDate(body string) string {
 }
 
 // ConvertPageContentToItems converts a PageContent to a channel full of Item.
+// Only the Items at -100% sales will be kept.
 // It also does the needed API calls to get the end date for each Item.
 // It may return an error if any arises.
 func ConvertPageContentToItems(content PageContent) (chan Item, error) {

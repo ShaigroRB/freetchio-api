@@ -50,9 +50,9 @@ func getPageSales(link string) (string, error) {
 	return string(body), nil
 }
 
-// getPageContent puts the content of a page in a channel for a given category.
+// getPageContent puts the content of a page in a list for a given category.
 // It returns whether it was the last page and an error if any.
-func getPageContent(category string, page int, channel chan PageContent) (isLastPage bool, err error) {
+func getPageContent(category string, page int, list *[]PageContent) (isLastPage bool, err error) {
 	json, err := getPageJSON(category, page)
 	if err != nil {
 		fmt.Println(err)
@@ -66,7 +66,7 @@ func getPageContent(category string, page int, channel chan PageContent) (isLast
 		return isLastPage, err
 	}
 
-	channel <- content
+	*list = append(*list, content)
 
 	isLastPage = content.NumItems < 30
 
@@ -74,52 +74,52 @@ func getPageContent(category string, page int, channel chan PageContent) (isLast
 }
 
 // Type that represents a function to get a PageContent for a specific category.
-type GetCategoryPageContentFn func(int, chan PageContent) (bool, error)
+type GetCategoryPageContentFn func(int, *[]PageContent) (bool, error)
 
-// GetGameAssetsPageContent puts in a channel the `game-assets` type content for a given page.
+// GetGameAssetsPageContent puts in a list the `game-assets` type content for a given page.
 // It returns whether it was the last pageand an error if any.
-func GetGameAssetsPageContent(page int, channel chan PageContent) (isLastPage bool, err error) {
-	return getPageContent("game-assets", page, channel)
+func GetGameAssetsPageContent(page int, list *[]PageContent) (isLastPage bool, err error) {
+	return getPageContent("game-assets", page, list)
 }
 
-// GetBooksPageContent puts in a channel the `books` type content for a given page.
+// GetBooksPageContent puts in a list the `books` type content for a given page.
 // It returns whether it was the last pageand an error if any.
-func GetBooksPageContent(page int, channel chan PageContent) (isLastPage bool, err error) {
-	return getPageContent("books", page, channel)
+func GetBooksPageContent(page int, list *[]PageContent) (isLastPage bool, err error) {
+	return getPageContent("books", page, list)
 }
 
-// GetToolsPageContent puts in a channel the `tools` type content for a given page.
+// GetToolsPageContent puts in a list the `tools` type content for a given page.
 // It returns whether it was the last pageand an error if any.
-func GetToolsPageContent(page int, channel chan PageContent) (isLastPage bool, err error) {
-	return getPageContent("tools", page, channel)
+func GetToolsPageContent(page int, list *[]PageContent) (isLastPage bool, err error) {
+	return getPageContent("tools", page, list)
 }
 
-// GetGamesPageContent puts in a channel the `games` type content for a given page.
+// GetGamesPageContent puts in a list the `games` type content for a given page.
 // It returns whether it was the last pageand an error if any.
-func GetGamesPageContent(page int, channel chan PageContent) (isLastPage bool, err error) {
-	return getPageContent("games", page, channel)
+func GetGamesPageContent(page int, list *[]PageContent) (isLastPage bool, err error) {
+	return getPageContent("games", page, list)
 }
 
-// GetPhysicalGamesPageContent puts in a channel the `physical-games` type content for a given page.
+// GetPhysicalGamesPageContent puts in a list the `physical-games` type content for a given page.
 // It returns whether it was the last pageand an error if any.
-func GetPhysicalGamesPageContent(page int, channel chan PageContent) (isLastPage bool, err error) {
-	return getPageContent("physical-games", page, channel)
+func GetPhysicalGamesPageContent(page int, list *[]PageContent) (isLastPage bool, err error) {
+	return getPageContent("physical-games", page, list)
 }
 
-// GetSoundstracksPageContent puts in a channel the `soundtracks` type content for a given page.
+// GetSoundstracksPageContent puts in a list the `soundtracks` type content for a given page.
 // It returns whether it was the last pageand an error if any.
-func GetSoundtracksPageContent(page int, channel chan PageContent) (isLastPage bool, err error) {
-	return getPageContent("soundtracks", page, channel)
+func GetSoundtracksPageContent(page int, list *[]PageContent) (isLastPage bool, err error) {
+	return getPageContent("soundtracks", page, list)
 }
 
-// GetGameModsPageContent puts in a channel the `game-mods` type content for a given page.
+// GetGameModsPageContent puts in a list the `game-mods` type content for a given page.
 // It returns whether it was the last pageand an error if any.
-func GetGameModsPageContent(page int, channel chan PageContent) (isLastPage bool, err error) {
-	return getPageContent("game-mods", page, channel)
+func GetGameModsPageContent(page int, list *[]PageContent) (isLastPage bool, err error) {
+	return getPageContent("game-mods", page, list)
 }
 
-// GetMiscPageContent puts in a channel the `misc` type content for a given page.
+// GetMiscPageContent puts in a list the `misc` type content for a given page.
 // It returns whether it was the last pageand an error if any.
-func GetMiscPageContent(page int, channel chan PageContent) (isLastPage bool, err error) {
-	return getPageContent("misc", page, channel)
+func GetMiscPageContent(page int, list *[]PageContent) (isLastPage bool, err error) {
+	return getPageContent("misc", page, list)
 }

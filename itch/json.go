@@ -11,26 +11,22 @@ func arrayToJSON(items []Item) (string, error) {
 	return string(result), err
 }
 
-// getCategoryAllPageContents returns a channel containing all the PageContent for a category.
+// getCategoryAllPageContents returns a list containing all the PageContent for a category.
 // It returns an error with it if any.
-func getCategoryAllPageContents(getCategoryPageContentFn GetCategoryPageContentFn) (chan PageContent, error) {
+func getCategoryAllPageContents(getCategoryPageContentFn GetCategoryPageContentFn) ([]PageContent, error) {
 	var err error
 
-	channel := make(chan PageContent)
-	go func() {
-		defer close(channel)
-
-		page := 0
-		for {
-			page++
-			isLastPage, err := getCategoryPageContentFn(page, channel)
-			if err != nil || isLastPage {
-				break
-			}
+	list := make([]PageContent, 0)
+	page := 0
+	for {
+		page++
+		isLastPage, err := getCategoryPageContentFn(page, &list)
+		if err != nil || isLastPage {
+			break
 		}
-	}()
+	}
 
-	return channel, err
+	return list, err
 }
 
 func errorToJSON(err error) string {
@@ -39,24 +35,21 @@ func errorToJSON(err error) string {
 
 // getCategoryItemsAsJSON returns a JSON string containing all items using a function to get the page contents for a category.
 func getCategoryItemsAsJSON(getCategoryPageContentFn GetCategoryPageContentFn) string {
-	// get a channel with all the PageContent for a category
-	pageContentChannel, err := getCategoryAllPageContents(getCategoryPageContentFn)
+	// get a list with all the PageContent for a category
+	pageContentList, err := getCategoryAllPageContents(getCategoryPageContentFn)
 
 	if err != nil {
 		return errorToJSON(err)
 	}
 
-	var items []Item
+	// initialize to always return a list, even when there is no item
+	items := make([]Item, 0)
 
-	for {
-		// loop on the element in the channel
-		content, ok := <-pageContentChannel
-		if !ok {
-			break
-		}
+	// loop on each element in the list
+	for _, pageContent := range pageContentList {
 
 		// for each PageContent, parse the items in it
-		itemsForPageContent, err := ConvertPageContentToItems(content)
+		itemsForPageContent, err := ConvertPageContentToItems(pageContent)
 
 		if err != nil {
 			return errorToJSON(err)
