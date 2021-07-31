@@ -9,18 +9,6 @@ import (
 	"golang.org/x/net/html/atom"
 )
 
-// The Item struct represents the data for an itch.io item.
-type Item struct {
-	ID          string
-	Link        string
-	ImgLink     string
-	Title       string
-	Description string
-	Author      string
-	SalesLink   string
-	EndDate     string
-}
-
 // getPreOrderQueue traverses an *html.Node in preorder to fill in a queue.
 func getPreOrderQueue(root *html.Node) []*html.Node {
 	queue := make([]*html.Node, 0)
