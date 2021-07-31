@@ -9,6 +9,7 @@ import (
 	"golang.org/x/net/html/atom"
 )
 
+// The Item struct represents the data for an itch.io item.
 type Item struct {
 	ID          string
 	Link        string
@@ -20,6 +21,7 @@ type Item struct {
 	EndDate     string
 }
 
+// getPreOrderQueue traverses an *html.Node in preorder to fill in a queue.
 func getPreOrderQueue(root *html.Node) []*html.Node {
 	queue := make([]*html.Node, 0)
 	res := make([]*html.Node, 0)
@@ -40,6 +42,8 @@ func getPreOrderQueue(root *html.Node) []*html.Node {
 	return res
 }
 
+// nodeToItemsWithoutEndDate returns a channel full of incomplete Item based on a node.
+// Those Item are missing the end date of the sale.
 func nodeToItemsWithoutEndDate(root *html.Node, maxItems int) chan Item {
 	cells := make(chan Item, maxItems)
 	nodes := getPreOrderQueue(root)
@@ -104,6 +108,7 @@ func nodeToItemsWithoutEndDate(root *html.Node, maxItems int) chan Item {
 	return cells
 }
 
+// parseEndDate looks for the end date hidden in the body of a sales page.
 func parseEndDate(body string) string {
 	regx := regexp.MustCompile(`end_date\".*\",`)
 	matches := regx.FindStringSubmatch(body)
@@ -113,6 +118,9 @@ func parseEndDate(body string) string {
 	return matches[0]
 }
 
+// PageContentToItems converts a PageContent to a channel full of Item.
+// It also does the needed API calls to get the end date for each Item.
+// It may return an error if any arises.
 func PageContentToItems(content PageContent) (chan Item, error) {
 	reader := strings.NewReader(content.Content)
 	node, err := html.Parse(reader)
