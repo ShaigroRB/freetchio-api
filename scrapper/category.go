@@ -13,3 +13,15 @@ const (
 	GameMods               = "game-mods"
 	Misc                   = "misc"
 )
+
+// Array containing all categories.
+var Categories = []Category{
+	GameAssets,
+	Books,
+	Tools,
+	Games,
+	PhysicalGames,
+	Soundtracks,
+	GameMods,
+	Misc,
+}
