@@ -107,11 +107,11 @@ func parseEndDate(body string) string {
 	return matches[0]
 }
 
-// ConvertPageContentToItems converts a PageContent to a channel full of Item.
+// ConvertContentToItems converts a Content to a channel full of Item.
 // Only the Items at -100% sales will be kept.
 // It also does the needed API calls to get the end date for each Item.
 // It may return an error if any arises.
-func ConvertPageContentToItems(content PageContent) (chan Item, error) {
+func ConvertContentToItems(content Content) (chan Item, error) {
 	reader := strings.NewReader(content.Content)
 	node, err := html.Parse(reader)
 	if err != nil {
@@ -125,7 +125,7 @@ func ConvertPageContentToItems(content PageContent) (chan Item, error) {
 	defer close(items)
 
 	for partialItem := range partialItems {
-		body, err := getPageSales(partialItem.SalesLink)
+		body, err := getSales(partialItem.SalesLink)
 		if err != nil {
 			fmt.Print(err)
 			return items, err

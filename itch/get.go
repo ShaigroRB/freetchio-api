@@ -12,9 +12,9 @@ const hostname = "https://itch.io"
 // default parameters when doing API calls
 const onsaleParams = "/on-sale?format=json&page"
 
-// getPageJSON returns the content of a page for a given category.
+// getJSON returns the content of a page for a given category.
 // It returns the JSON as a string and an error if any.
-func getPageJSON(category string, page int) (string, error) {
+func getJSON(category string, page int) (string, error) {
 	url := fmt.Sprintf("%s/%s%s=%d", hostname, category, onsaleParams, page)
 	resp, err := http.Get(url)
 
@@ -32,8 +32,8 @@ func getPageJSON(category string, page int) (string, error) {
 	return string(body), nil
 }
 
-// getPageSales returns the content of a sales page and an error if any.
-func getPageSales(link string) (string, error) {
+// getSales returns the content of a sales page and an error if any.
+func getSales(link string) (string, error) {
 	url := fmt.Sprintf("%s%s", hostname, link)
 	resp, err := http.Get(url)
 
@@ -50,16 +50,16 @@ func getPageSales(link string) (string, error) {
 	return string(body), nil
 }
 
-// getPageContent puts the content of a page in a list for a given category.
+// getContent puts the content of a page in a list for a given category.
 // It returns whether it was the last page and an error if any.
-func getPageContent(category string, page int, list *[]PageContent) (isLastPage bool, err error) {
-	json, err := getPageJSON(category, page)
+func getContent(category string, page int, list *[]Content) (isLastPage bool, err error) {
+	json, err := getJSON(category, page)
 	if err != nil {
 		fmt.Println(err)
 		return isLastPage, err
 	}
 
-	content := PageContent{}
+	content := Content{}
 	err = content.FromJSON(json)
 	if err != nil {
 		fmt.Println(err)
@@ -73,53 +73,53 @@ func getPageContent(category string, page int, list *[]PageContent) (isLastPage 
 	return isLastPage, nil
 }
 
-// Type that represents a function to get a PageContent for a specific category.
-type GetCategoryPageContentFn func(int, *[]PageContent) (bool, error)
+// Type that represents a function to get a Content for a specific category.
+type GetCategoryContentFn func(int, *[]Content) (bool, error)
 
-// GetGameAssetsPageContent puts in a list the `game-assets` type content for a given page.
+// GetGameAssetsContent puts in a list the `game-assets` type content for a given page.
 // It returns whether it was the last pageand an error if any.
-func GetGameAssetsPageContent(page int, list *[]PageContent) (isLastPage bool, err error) {
-	return getPageContent("game-assets", page, list)
+func GetGameAssetsContent(page int, list *[]Content) (isLastPage bool, err error) {
+	return getContent("game-assets", page, list)
 }
 
-// GetBooksPageContent puts in a list the `books` type content for a given page.
+// GetBooksContent puts in a list the `books` type content for a given page.
 // It returns whether it was the last pageand an error if any.
-func GetBooksPageContent(page int, list *[]PageContent) (isLastPage bool, err error) {
-	return getPageContent("books", page, list)
+func GetBooksContent(page int, list *[]Content) (isLastPage bool, err error) {
+	return getContent("books", page, list)
 }
 
-// GetToolsPageContent puts in a list the `tools` type content for a given page.
+// GetToolsContent puts in a list the `tools` type content for a given page.
 // It returns whether it was the last pageand an error if any.
-func GetToolsPageContent(page int, list *[]PageContent) (isLastPage bool, err error) {
-	return getPageContent("tools", page, list)
+func GetToolsContent(page int, list *[]Content) (isLastPage bool, err error) {
+	return getContent("tools", page, list)
 }
 
-// GetGamesPageContent puts in a list the `games` type content for a given page.
+// GetGamesContent puts in a list the `games` type content for a given page.
 // It returns whether it was the last pageand an error if any.
-func GetGamesPageContent(page int, list *[]PageContent) (isLastPage bool, err error) {
-	return getPageContent("games", page, list)
+func GetGamesContent(page int, list *[]Content) (isLastPage bool, err error) {
+	return getContent("games", page, list)
 }
 
-// GetPhysicalGamesPageContent puts in a list the `physical-games` type content for a given page.
+// GetPhysicalGamesContent puts in a list the `physical-games` type content for a given page.
 // It returns whether it was the last pageand an error if any.
-func GetPhysicalGamesPageContent(page int, list *[]PageContent) (isLastPage bool, err error) {
-	return getPageContent("physical-games", page, list)
+func GetPhysicalGamesContent(page int, list *[]Content) (isLastPage bool, err error) {
+	return getContent("physical-games", page, list)
 }
 
-// GetSoundstracksPageContent puts in a list the `soundtracks` type content for a given page.
+// GetSoundstracksContent puts in a list the `soundtracks` type content for a given page.
 // It returns whether it was the last pageand an error if any.
-func GetSoundtracksPageContent(page int, list *[]PageContent) (isLastPage bool, err error) {
-	return getPageContent("soundtracks", page, list)
+func GetSoundtracksContent(page int, list *[]Content) (isLastPage bool, err error) {
+	return getContent("soundtracks", page, list)
 }
 
-// GetGameModsPageContent puts in a list the `game-mods` type content for a given page.
+// GetGameModsContent puts in a list the `game-mods` type content for a given page.
 // It returns whether it was the last pageand an error if any.
-func GetGameModsPageContent(page int, list *[]PageContent) (isLastPage bool, err error) {
-	return getPageContent("game-mods", page, list)
+func GetGameModsContent(page int, list *[]Content) (isLastPage bool, err error) {
+	return getContent("game-mods", page, list)
 }
 
-// GetMiscPageContent puts in a list the `misc` type content for a given page.
+// GetMiscContent puts in a list the `misc` type content for a given page.
 // It returns whether it was the last pageand an error if any.
-func GetMiscPageContent(page int, list *[]PageContent) (isLastPage bool, err error) {
-	return getPageContent("misc", page, list)
+func GetMiscContent(page int, list *[]Content) (isLastPage bool, err error) {
+	return getContent("misc", page, list)
 }

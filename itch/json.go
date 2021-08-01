@@ -11,16 +11,16 @@ func arrayToJSON(items []Item) (string, error) {
 	return string(result), err
 }
 
-// getCategoryAllPageContents returns a list containing all the PageContent for a category.
+// getCategoryAllContents returns a list containing all the Content for a category.
 // It returns an error with it if any.
-func getCategoryAllPageContents(getCategoryPageContentFn GetCategoryPageContentFn) ([]PageContent, error) {
+func getCategoryAllContents(getCategoryContentFn GetCategoryContentFn) ([]Content, error) {
 	var err error
 
-	list := make([]PageContent, 0)
+	list := make([]Content, 0)
 	page := 0
 	for {
 		page++
-		isLastPage, err := getCategoryPageContentFn(page, &list)
+		isLastPage, err := getCategoryContentFn(page, &list)
 		if err != nil || isLastPage {
 			break
 		}
@@ -34,9 +34,9 @@ func errorToJSON(err error) string {
 }
 
 // getCategoryItemsAsJSON returns a JSON string containing all items using a function to get the page contents for a category.
-func getCategoryItemsAsJSON(getCategoryPageContentFn GetCategoryPageContentFn) string {
-	// get a list with all the PageContent for a category
-	pageContentList, err := getCategoryAllPageContents(getCategoryPageContentFn)
+func getCategoryItemsAsJSON(getCategoryContentFn GetCategoryContentFn) string {
+	// get a list with all the Content for a category
+	pageContentList, err := getCategoryAllContents(getCategoryContentFn)
 
 	if err != nil {
 		return errorToJSON(err)
@@ -48,15 +48,15 @@ func getCategoryItemsAsJSON(getCategoryPageContentFn GetCategoryPageContentFn) s
 	// loop on each element in the list
 	for _, pageContent := range pageContentList {
 
-		// for each PageContent, parse the items in it
-		itemsForPageContent, err := ConvertPageContentToItems(pageContent)
+		// for each Content, parse the items in it
+		itemsForContent, err := ConvertContentToItems(pageContent)
 
 		if err != nil {
 			return errorToJSON(err)
 		}
 
 		// add those items to the list of all the items
-		for item := range itemsForPageContent {
+		for item := range itemsForContent {
 			items = append(items, item)
 		}
 	}
@@ -75,27 +75,27 @@ func GetCategoryItemsAsJSON(category Category) string {
 	var itemsAsJSON string
 
 	// inner function to keep readability in the next lines
-	setResult := func(fn GetCategoryPageContentFn) {
+	setResult := func(fn GetCategoryContentFn) {
 		itemsAsJSON = getCategoryItemsAsJSON(fn)
 	}
 
 	switch category {
 	case GameAssets:
-		setResult(GetGameAssetsPageContent)
+		setResult(GetGameAssetsContent)
 	case Books:
-		setResult(GetBooksPageContent)
+		setResult(GetBooksContent)
 	case Tools:
-		setResult(GetToolsPageContent)
+		setResult(GetToolsContent)
 	case Games:
-		setResult(GetGamesPageContent)
+		setResult(GetGamesContent)
 	case PhysicalGames:
-		setResult(GetPhysicalGamesPageContent)
+		setResult(GetPhysicalGamesContent)
 	case Soundtracks:
-		setResult(GetSoundtracksPageContent)
+		setResult(GetSoundtracksContent)
 	case GameMods:
-		setResult(GetGameModsPageContent)
+		setResult(GetGameModsContent)
 	case Misc:
-		setResult(GetMiscPageContent)
+		setResult(GetMiscContent)
 	}
 
 	return itemsAsJSON
