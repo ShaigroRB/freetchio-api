@@ -2,4 +2,4 @@ module freetchio-api
 
 go 1.16
 
-require golang.org/x/net v0.0.0-20210525063256-abc453219eb5 // indirect
+require golang.org/x/net v0.0.0-20210726213435-c6fcb2dbf985 // indirect

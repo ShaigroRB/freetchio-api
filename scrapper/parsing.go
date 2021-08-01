@@ -1,4 +1,4 @@
-package itch
+package scrapper
 
 import (
 	"fmt"
