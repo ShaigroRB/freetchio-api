@@ -9,7 +9,7 @@ const (
 	Tools                  = "tools"
 	Games                  = "games"
 	PhysicalGames          = "physical-games"
-	Soundtracks            = "soundstracks"
+	Soundtracks            = "soundtracks"
 	GameMods               = "game-mods"
 	Misc                   = "misc"
 )

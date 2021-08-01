@@ -30,6 +30,9 @@ func scrapItchio() {
 
 // ScrapItchioEvery12Hours creates new JSON files every 12 hours for all the free on-sale items of itch.io.
 func ScrapItchioEvery12Hours() {
+	// Create the JSON files for the first time
+	scrapItchio()
+
 	for range time.Tick(time.Hour * 12) {
 		scrapItchio()
 	}
