@@ -1,125 +1,102 @@
 package itch
 
 import (
+	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 )
 
-// itch.io hostname
-const hostname = "https://itch.io"
+// arrayToJSON converts an array to a JSON string.
+func arrayToJSON(items []Item) (string, error) {
+	result, err := json.Marshal(items)
+	return string(result), err
+}
 
-// default parameters when doing API calls
-const onsaleParams = "/on-sale?format=json&page"
+// getCategoryAllContents returns a list containing all the Content for a category.
+// It returns an error with it if any.
+func getCategoryAllContents(getCategoryContentFn GetCategoryContentFn) ([]Content, error) {
+	var err error
 
-// getJSON returns the content of a page for a given category.
-// It returns the JSON as a string and an error if any.
-func getJSON(category string, page int) (string, error) {
-	url := fmt.Sprintf("%s/%s%s=%d", hostname, category, onsaleParams, page)
-	resp, err := http.Get(url)
-
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-
-	body, err := io.ReadAll(resp.Body)
-
-	if err != nil {
-		return "", err
+	list := make([]Content, 0)
+	page := 0
+	for {
+		page++
+		isLastPage, err := getCategoryContentFn(page, &list)
+		if err != nil || isLastPage {
+			break
+		}
 	}
 
-	return string(body), nil
+	return list, err
 }
 
-// getSales returns the content of a sales page and an error if any.
-func getSales(link string) (string, error) {
-	url := fmt.Sprintf("%s%s", hostname, link)
-	resp, err := http.Get(url)
+func errorToJSON(err error) string {
+	return fmt.Sprintf("{\"error\": \"%s\"}", err.Error())
+}
+
+// getCategoryItemsAsJSON returns a JSON string containing all items using a function to get the page contents for a category.
+func getCategoryItemsAsJSON(getCategoryContentFn GetCategoryContentFn) string {
+	// get a list with all the Content for a category
+	pageContentList, err := getCategoryAllContents(getCategoryContentFn)
 
 	if err != nil {
-		return "", err
+		return errorToJSON(err)
 	}
-	defer resp.Body.Close()
 
-	body, err := io.ReadAll(resp.Body)
+	// initialize to always return a list, even when there is no item
+	items := make([]Item, 0)
+
+	// loop on each element in the list
+	for _, pageContent := range pageContentList {
+
+		// for each Content, parse the items in it
+		itemsForContent, err := ConvertContentToItems(pageContent)
+
+		if err != nil {
+			return errorToJSON(err)
+		}
+
+		// add those items to the list of all the items
+		for item := range itemsForContent {
+			items = append(items, item)
+		}
+	}
+
+	// convert all the items to a single json
+	result, err := arrayToJSON(items)
+
 	if err != nil {
-		return "", err
+		return errorToJSON(err)
+	}
+	return result
+}
+
+// GetCategoryItemsAsJSON returns a JSON string containing all items for a given category.
+func GetCategoryItemsAsJSON(category Category) string {
+	var itemsAsJSON string
+
+	// inner function to keep readability in the next lines
+	setResult := func(fn GetCategoryContentFn) {
+		itemsAsJSON = getCategoryItemsAsJSON(fn)
 	}
 
-	return string(body), nil
-}
-
-// getContent puts the content of a page in a list for a given category.
-// It returns whether it was the last page and an error if any.
-func getContent(category string, page int, list *[]Content) (isLastPage bool, err error) {
-	json, err := getJSON(category, page)
-	if err != nil {
-		fmt.Println(err)
-		return isLastPage, err
+	switch category {
+	case GameAssets:
+		setResult(GetGameAssetsContent)
+	case Books:
+		setResult(GetBooksContent)
+	case Tools:
+		setResult(GetToolsContent)
+	case Games:
+		setResult(GetGamesContent)
+	case PhysicalGames:
+		setResult(GetPhysicalGamesContent)
+	case Soundtracks:
+		setResult(GetSoundtracksContent)
+	case GameMods:
+		setResult(GetGameModsContent)
+	case Misc:
+		setResult(GetMiscContent)
 	}
 
-	content := Content{}
-	err = content.FromJSON(json)
-	if err != nil {
-		fmt.Println(err)
-		return isLastPage, err
-	}
-
-	*list = append(*list, content)
-
-	isLastPage = content.NumItems < 30
-
-	return isLastPage, nil
-}
-
-// Type that represents a function to get a Content for a specific category.
-type GetCategoryContentFn func(int, *[]Content) (bool, error)
-
-// GetGameAssetsContent puts in a list the `game-assets` type content for a given page.
-// It returns whether it was the last pageand an error if any.
-func GetGameAssetsContent(page int, list *[]Content) (isLastPage bool, err error) {
-	return getContent("game-assets", page, list)
-}
-
-// GetBooksContent puts in a list the `books` type content for a given page.
-// It returns whether it was the last pageand an error if any.
-func GetBooksContent(page int, list *[]Content) (isLastPage bool, err error) {
-	return getContent("books", page, list)
-}
-
-// GetToolsContent puts in a list the `tools` type content for a given page.
-// It returns whether it was the last pageand an error if any.
-func GetToolsContent(page int, list *[]Content) (isLastPage bool, err error) {
-	return getContent("tools", page, list)
-}
-
-// GetGamesContent puts in a list the `games` type content for a given page.
-// It returns whether it was the last pageand an error if any.
-func GetGamesContent(page int, list *[]Content) (isLastPage bool, err error) {
-	return getContent("games", page, list)
-}
-
-// GetPhysicalGamesContent puts in a list the `physical-games` type content for a given page.
-// It returns whether it was the last pageand an error if any.
-func GetPhysicalGamesContent(page int, list *[]Content) (isLastPage bool, err error) {
-	return getContent("physical-games", page, list)
-}
-
-// GetSoundstracksContent puts in a list the `soundtracks` type content for a given page.
-// It returns whether it was the last pageand an error if any.
-func GetSoundtracksContent(page int, list *[]Content) (isLastPage bool, err error) {
-	return getContent("soundtracks", page, list)
-}
-
-// GetGameModsContent puts in a list the `game-mods` type content for a given page.
-// It returns whether it was the last pageand an error if any.
-func GetGameModsContent(page int, list *[]Content) (isLastPage bool, err error) {
-	return getContent("game-mods", page, list)
-}
-
-// GetMiscContent puts in a list the `misc` type content for a given page.
-// It returns whether it was the last pageand an error if any.
-func GetMiscContent(page int, list *[]Content) (isLastPage bool, err error) {
-	return getContent("misc", page, list)
+	return itemsAsJSON
 }
