@@ -1,0 +1,36 @@
+package main
+
+import (
+	"fmt"
+	"io/ioutil"
+	"time"
+
+	"freetchio-api/scrapper"
+)
+
+// writeJSONFile writes content into a JSON file.
+func writeJSONFile(content string, filename string) error {
+	jsonFilename := fmt.Sprintf("%s.json", filename)
+	contentBytes := []byte(content)
+	err := ioutil.WriteFile(jsonFilename, contentBytes, 0644)
+	return err
+}
+
+// scrapItchio creates new JSON files for all the free on-sales items of itch.io.
+func scrapItchio() {
+	for _, category := range scrapper.Categories {
+		jsonString := scrapper.GetCategoryItemsAsJSON(category)
+		err := writeJSONFile(jsonString, string(category))
+
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+}
+
+// ScrapItchioEvery12Hours creates new JSON files every 12 hours for all the free on-sale items of itch.io.
+func ScrapItchioEvery12Hours() {
+	for range time.Tick(time.Hour * 12) {
+		scrapItchio()
+	}
+}
