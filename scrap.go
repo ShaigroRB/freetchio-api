@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"time"
 
-	"freetchio-api/scrapper"
+	"freetchio-api/itch"
 )
 
 // writeJSONFile writes content into a JSON file.
@@ -18,8 +18,8 @@ func writeJSONFile(content string, filename string) error {
 
 // scrapItchio creates new JSON files for all the free on-sales items of itch.io.
 func scrapItchio() {
-	for _, category := range scrapper.Categories {
-		jsonString := scrapper.GetCategoryItemsAsJSON(category)
+	for _, category := range itch.Categories {
+		jsonString := itch.GetCategoryItemsAsJSON(category)
 		err := writeJSONFile(jsonString, string(category))
 
 		if err != nil {

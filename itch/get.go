@@ -1,4 +1,4 @@
-package scrapper
+package itch
 
 import (
 	"encoding/json"

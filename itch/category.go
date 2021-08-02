@@ -1,4 +1,4 @@
-package scrapper
+package itch
 
 type Category string
 
