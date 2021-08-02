@@ -6,6 +6,9 @@
 
 FROM golang:1.16-alpine AS build
 
+# Certificate is needed for http.GET from golang (x509 docker error)
+RUN apk --no-cache add ca-certificates
+
 WORKDIR /app
 
 COPY go.mod ./
@@ -29,6 +32,8 @@ RUN CGO_ENABLED=0 go build -o /freetchio-api main.go scrap.go api.go
 
 FROM scratch
 
+# Copy the ca-certificate.crt from the build stage.
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=build /freetchio-api /freetchio-api
 
 EXPOSE 8080
