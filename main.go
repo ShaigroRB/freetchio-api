@@ -18,5 +18,5 @@ func main() {
 	router.GET("/game-mods", GetGameMods)
 	router.GET("/misc", GetMisc)
 
-	router.Run("localhost:8042")
+	router.Run()
 }
