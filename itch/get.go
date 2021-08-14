@@ -84,6 +84,8 @@ func GetCategoryItemsAsJSON(category Category) string {
 		setResult(GetGameAssetsContent)
 	case Books:
 		setResult(GetBooksContent)
+	case Comics:
+		setResult(GetComicsContent)
 	case Tools:
 		setResult(GetToolsContent)
 	case Games:

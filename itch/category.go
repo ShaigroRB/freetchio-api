@@ -6,6 +6,7 @@ type Category string
 const (
 	GameAssets    Category = "game-assets"
 	Books                  = "books"
+	Comics                 = "comics"
 	Tools                  = "tools"
 	Games                  = "games"
 	PhysicalGames          = "physical-games"
@@ -18,6 +19,7 @@ const (
 var Categories = []Category{
 	GameAssets,
 	Books,
+	Comics,
 	Tools,
 	Games,
 	PhysicalGames,

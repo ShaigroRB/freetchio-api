@@ -88,6 +88,12 @@ func GetBooksContent(page int, list *[]Content) (isLastPage bool, err error) {
 	return getContent("books", page, list)
 }
 
+// GetComicsContent puts in a list the `comics` type content for a given page.
+// It returns whether it was the last pageand an error if any.
+func GetComicsContent(page int, list *[]Content) (isLastPage bool, err error) {
+	return getContent("comics", page, list)
+}
+
 // GetToolsContent puts in a list the `tools` type content for a given page.
 // It returns whether it was the last pageand an error if any.
 func GetToolsContent(page int, list *[]Content) (isLastPage bool, err error) {

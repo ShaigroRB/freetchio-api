@@ -54,6 +54,7 @@ html_element interesting_attribute (why) [text] (??)
 The API only exposes GET endpoints:
 - `/game-assets`    returns game assets
 - `/books`          returns books
+- `/comics`         returns comics
 - `/tools`          returns tools
 - `/games`          returns games
 - `/physical-games` returns physical games

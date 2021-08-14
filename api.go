@@ -24,6 +24,11 @@ func GetBooks(context *gin.Context) {
 	getCategory(context, itch.Books)
 }
 
+// GetComics serves all comics items as JSON.
+func GetComics(context *gin.Context) {
+	getCategory(context, itch.Comics)
+}
+
 // GetTools serves all tools items as JSON.
 func GetTools(context *gin.Context) {
 	getCategory(context, itch.Tools)
