@@ -22,7 +22,7 @@ COPY . ./
 
 # Needs the CGO_ENABLED when using golang with alpine image.
 # Otherwise, it will fail to run.
-RUN CGO_ENABLED=0 go build -o /freetchio-api main.go scrap.go api.go
+RUN CGO_ENABLED=0 go build -o /freetchio-api main.go scrap.go api.go service.go
 
 ##
 ## Deploy

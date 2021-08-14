@@ -1,7 +1,8 @@
 package main
 
 import (
-	"fmt"
+	"errors"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 
@@ -10,8 +11,15 @@ import (
 
 // getCategory serves all items of a itch.io category as JSON.
 func getCategory(context *gin.Context, category itch.Category) {
-	filename := fmt.Sprintf("%s.json", category)
-	context.File(filename)
+	result, err := StorageService.Read(string(category))
+
+	if err != nil {
+		context.Error(err)
+		return
+	}
+
+	jsonData := []byte(result)
+	context.Data(http.StatusOK, "application/json", jsonData)
 }
 
 // GetGameAssets serves all game assets items as JSON.
@@ -57,4 +65,25 @@ func GetGameMods(context *gin.Context) {
 // GetMisc serves all misc items as JSON.
 func GetMisc(context *gin.Context) {
 	getCategory(context, itch.Misc)
+}
+
+// StartScrap scraps itch.io if the header is valid.
+func StartScrap(context *gin.Context) {
+	// Check if header is correct.
+	cronKey := context.GetHeader("X-Cron-key")
+
+	if cronKey != CRON_SCRAP_KEY {
+		// Might as well do some ads :P
+		err := errors.New("Nope. " +
+			"If you want to scrap more often, feel free to host it yourself. " +
+			"You can find the code at " +
+			"<a href='https://github.com/shaigrorb/freetchio'>https//github.com/shaigrorb/freetchio</a>.")
+		context.Error(err)
+	}
+
+	// Sends accepted status as response since scrapping will take time.
+	context.Status(http.StatusAccepted)
+
+	// Update all items for each category.
+	scrapItchio(StorageService.Update)
 }

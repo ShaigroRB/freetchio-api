@@ -1,16 +1,36 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"fmt"
+	"freetchio-api/service"
+	"os"
+
+	"github.com/gin-gonic/gin"
+)
+
 // Environment variables
 var (
 	JSONBIN_API_KEY     = os.Getenv("JSONBIN_API_KEY")
 	JSONBIN_INFO_BIN_ID = os.Getenv("JSONBIN_INFO_BIN_ID")
 	CRON_SCRAP_KEY      = os.Getenv("CRON_SCRAP_KEY")
+	PORT                = os.Getenv("PORT")
 )
 
+// Storage service used. Currently, it is jsonbin.io service.
+var StorageService = service.JsonBin{
+	ApiKey:    JSONBIN_API_KEY,
+	InfoBinId: JSONBIN_INFO_BIN_ID,
+	BinsIds:   &service.BinsIDs{},
+}
+
 func main() {
-	// coroutine that takes care of scrapping itch.io and creating the JSON files
-	go ScrapItchioEvery12Hours()
+	// This is just because I'm too lazy to put all ids in environment variables.
+	// And who knows, maybe future categories will appear.
+	// Get all the bins ids thanks to the info bin id.
+	err := StorageService.GetAllBinsIds()
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	// Set the API.
 	router := gin.Default()
@@ -27,5 +47,5 @@ func main() {
 
 	router.POST("/scrap", StartScrap)
 
-	router.Run()
+	router.Run(":" + PORT)
 }
