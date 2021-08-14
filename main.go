@@ -1,6 +1,12 @@
 package main
 
 import "github.com/gin-gonic/gin"
+// Environment variables
+var (
+	JSONBIN_API_KEY     = os.Getenv("JSONBIN_API_KEY")
+	JSONBIN_INFO_BIN_ID = os.Getenv("JSONBIN_INFO_BIN_ID")
+	CRON_SCRAP_KEY      = os.Getenv("CRON_SCRAP_KEY")
+)
 
 func main() {
 	// coroutine that takes care of scrapping itch.io and creating the JSON files
