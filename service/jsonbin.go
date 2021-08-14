@@ -57,6 +57,8 @@ func (bin *JsonBin) getBinID(key string) string {
 		id = binsIds.GameMods
 	case "misc":
 		id = binsIds.Misc
+	default:
+		id = key
 	}
 
 	return id
