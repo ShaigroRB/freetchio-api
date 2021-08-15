@@ -23,6 +23,9 @@ var StorageService = service.JsonBin{
 	BinsIds:   &service.BinsIDs{},
 }
 
+// Storage service for local development
+// var StorageService = service.FileService{}
+
 func main() {
 	// This is just because I'm too lazy to put all ids in environment variables.
 	// And who knows, maybe future categories will appear.
