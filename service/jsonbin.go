@@ -156,6 +156,8 @@ func (bin *JsonBin) Read(key string) (string, error) {
 		return "", err
 	}
 
+	req.Header.Add("X-BIN-META", "false")
+
 	resp, err := requestWithApiKeyWithResponse(req, apiKey)
 	if err != nil {
 		return "", err
