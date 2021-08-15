@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -14,7 +13,7 @@ func getCategory(context *gin.Context, category itch.Category) {
 	result, err := StorageService.Read(string(category))
 
 	if err != nil {
-		context.Error(err)
+		context.String(http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -74,16 +73,16 @@ func StartScrap(context *gin.Context) {
 
 	if cronKey != CRON_SCRAP_KEY {
 		// Might as well do some ads :P
-		err := errors.New("Nope. " +
+		msg := "Nope. " +
 			"If you want to scrap more often, feel free to host it yourself. " +
-			"You can find the code at " +
-			"<a href='https://github.com/shaigrorb/freetchio'>https//github.com/shaigrorb/freetchio</a>.")
-		context.Error(err)
+			"You can find the code at https//github.com/shaigrorb/freetchio."
+		context.String(http.StatusBadRequest, msg)
+		return
 	}
 
 	// Sends accepted status as response since scrapping will take time.
 	context.Status(http.StatusAccepted)
 
 	// Update all items for each category.
-	scrapItchio(StorageService.Update)
+	go scrapItchio(StorageService.Update)
 }
