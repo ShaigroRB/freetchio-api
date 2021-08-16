@@ -5,6 +5,7 @@ import (
 	"freetchio-api/service"
 	"os"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -37,6 +38,7 @@ func main() {
 
 	// Set the API.
 	router := gin.Default()
+	router.Use(cors.Default())
 
 	router.GET("/game-assets", GetGameAssets)
 	router.GET("/books", GetBooks)
