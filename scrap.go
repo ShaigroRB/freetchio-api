@@ -2,14 +2,15 @@ package main
 
 import (
 	"fmt"
-	"freetchio-api/itch"
+
+	fditch "github.com/ShaigroRB/go-free-discount-itch"
 )
 
 // WriteItemsFn is a common type for Create & Update of the ItemService interface
 type WriteItemsFn func(string, string) error
 
 // writeValueForCategory writes value for a category
-func writeValueForCategory(category itch.Category, value string, fn WriteItemsFn) {
+func writeValueForCategory(category fditch.Category, value string, fn WriteItemsFn) {
 	key := string(category)
 	err := fn(key, value)
 	if err != nil {
@@ -19,8 +20,8 @@ func writeValueForCategory(category itch.Category, value string, fn WriteItemsFn
 
 // scrapItchio creates new JSON files for all the free on-sales items of itch.io.
 func scrapItchio(fn WriteItemsFn) {
-	for _, category := range itch.Categories {
-		jsonString := itch.GetCategoryItemsAsJSON(category)
+	for _, category := range fditch.Categories {
+		jsonString := fditch.GetCategoryItemsAsJSON(category)
 		writeValueForCategory(category, jsonString, fn)
 	}
 }
